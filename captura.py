@@ -26,18 +26,17 @@ def coleta_links(url_entrada):
     from selenium import webdriver
     from bs4 import BeautifulSoup
     from selenium.webdriver.support.ui import WebDriverWait
-    #from selenium.webdriver.chrome.options import Options 
-    #import time
+    from selenium.webdriver.chrome.options import Options
 
-    #chrome_options = Options()
-    #chrome_options.add_argument("--headless") 
-
-    driver = webdriver.Chrome('chromedriver',)
+    #Abrindo o Chrome no modo headless
+    opcao = Options()
+    opcao.add_argument("--headless")
+    #Abrindo a página
+    driver = webdriver.Chrome('chromedriver',options=opcao)
     WebDriverWait(driver, timeout=3)
     driver.get(url_entrada)
-    #time.sleep(.5)
 
-
+    #Retirando o HTML da página para filtrar os links das publicações
     elementos=driver.find_element("id","_br_com_seatecnologia_in_buscadou_BuscaDouPortlet_hierarchy_content").get_attribute("innerHTML")
     soup=BeautifulSoup(elementos,"html.parser")
     links=[link["href"] for link in soup.find_all("a",href=True)]
@@ -155,7 +154,6 @@ def gera_excel(nome):
 
 def main():
 
-
     url_entrada='https://www.in.gov.br/consulta/-/buscar/dou?q="deferir+os+registros+e+as+petições+dos+produtos+saneantes"&s=todos&exactDate=personalizado&sortType=0&publishFrom=01-01-2022&publishTo=28-02-2022'
 
     publicacoes=coleta_links(url_entrada)
@@ -164,5 +162,10 @@ def main():
 
     gera_excel("resultado")
 
+
+import time
 if __name__ == "__main__":
+    #Mede o tempo de execução do programa
+    start_time = time.process_time()
     main()
+    print("--- %s seconds ---" % (time.process_time() - start_time))
